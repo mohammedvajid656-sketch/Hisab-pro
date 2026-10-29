@@ -1,0 +1,27 @@
+{% load static %}
+<!doctype html>
+<html lang="{% if request.COOKIES.django_language == 'ml' %}ml{% else %}en{% endif %}">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{% block title %}HisabPro{% endblock %}</title>
+<link rel="stylesheet" href="{% static 'css/app.css' %}">
+</head>
+<body>
+<header class="topbar">
+  <a class="brand" href="{% url 'home' %}"><span class="brand-icon">H</span><span>HisabPro<small>SMART ACCOUNTING</small></span></a>
+  <nav class="top-actions">
+    <a href="{% url 'language_switch' 'en' %}">English</a><a href="{% url 'language_switch' 'ml' %}">മലയാളം</a>
+    {% if user.is_authenticated %}
+      <span class="user-chip">{{ user.username }}</span>
+      <form method="post" action="{% url 'logout' %}">{% csrf_token %}<button class="link-button" type="submit">{% if request.COOKIES.django_language == 'ml' %}പുറത്തുകടക്കുക{% else %}Log out{% endif %}</button></form>
+    {% else %}
+      <a href="{% url 'login' %}">{% if request.COOKIES.django_language == 'ml' %}ലോഗിൻ{% else %}Log in{% endif %}</a>
+    {% endif %}
+  </nav>
+</header>
+<main class="container">
+{% if messages %}<div class="messages">{% for message in messages %}<div class="message">{{ message }}</div>{% endfor %}</div>{% endif %}
+{% block content %}{% endblock %}
+</main>
+<footer>© {% now "Y" %} HisabPro · Simple accounting for growing businesses</footer>
+</body></html>

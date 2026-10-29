@@ -1,0 +1,9 @@
+{% extends "base.html" %}
+{% block title %}Transactions · HisabPro{% endblock %}
+{% block content %}
+<div class="page-heading heading-row"><div><div class="eyebrow">{{ business.name }}</div><h1>Transactions</h1><p class="muted">All recorded income and expenses for this business.</p></div><a class="btn" href="{% url 'transaction_create' business.id %}">＋ Add transaction</a></div>
+<section class="panel table-panel"><div class="table-scroll"><table><thead><tr><th>Description</th><th>Category</th><th>Date</th><th>Type</th><th class="number">Amount</th></tr></thead><tbody>
+{% for t in transactions %}<tr><td class="primary-cell">{{ t.description }}</td><td>{{ t.category }}</td><td>{{ t.transaction_date|date:"d M Y" }}</td><td><span class="pill {% if t.transaction_type == 'expense' %}pill-expense{% else %}pill-income{% endif %}">{{ t.get_transaction_type_display }}</span></td><td class="number {% if t.transaction_type == 'expense' %}negative{% else %}positive{% endif %}">{% if t.transaction_type == 'expense' %}−{% else %}+{% endif %} {{ business.currency }} {{ t.amount|floatformat:2 }}</td></tr>
+{% empty %}<tr><td colspan="5" class="empty-cell">No transactions yet. Add your first transaction to begin.</td></tr>{% endfor %}
+</tbody></table></div></section>
+{% endblock %}

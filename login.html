@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+{% block title %}Log in · HisabPro{% endblock %}
+{% block content %}
+<div class="auth-wrap"><section class="auth-card">
+<div class="eyebrow">WELCOME BACK</div><h1>{% if request.COOKIES.django_language == 'ml' %}നിങ്ങളുടെ അക്കൗണ്ടിലേക്ക് ലോഗിൻ ചെയ്യുക{% else %}Log in to HisabPro{% endif %}</h1>
+<p class="muted">{% if request.COOKIES.django_language == 'ml' %}നിങ്ങളുടെ ബിസിനസ് അക്കൗണ്ടിങ് തുടരുക.{% else %}Continue managing your business finances.{% endif %}</p>
+<form method="post">{% csrf_token %}{{ form.non_field_errors }}
+{% for field in form %}<div class="field"><label for="{{ field.id_for_label }}">{{ field.label }}</label>{{ field }}{% for error in field.errors %}<small class="error">{{ error }}</small>{% endfor %}</div>{% endfor %}
+{% if next %}<input type="hidden" name="next" value="{{ next }}">{% endif %}
+<button class="btn full" type="submit">{% if request.COOKIES.django_language == 'ml' %}ലോഗിൻ ചെയ്യുക{% else %}Log in{% endif %}</button></form>
+<p class="auth-bottom">New to HisabPro? <a href="{% url 'signup' %}">Create an account</a></p>
+</section></div>
+{% endblock %}

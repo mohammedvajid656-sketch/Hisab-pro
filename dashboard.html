@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% block title %}Dashboard · HisabPro{% endblock %}
+{% block content %}
+<div class="page-heading heading-row"><div><div class="eyebrow">{% if request.COOKIES.django_language == 'ml' %}ബിസിനസ് ഡാഷ്ബോർഡ്{% else %}BUSINESS OVERVIEW{% endif %}</div><h1>{{ business.name }}</h1><p class="muted">{% if request.COOKIES.django_language == 'ml' %}നിങ്ങളുടെ അക്കൗണ്ടിങ് ഒറ്റനോട്ടത്തിൽ.{% else %}Here is a clear view of your business finances.{% endif %}</p></div><a class="btn" href="{% url 'transaction_create' business.id %}">＋ Add transaction</a></div>
+{% if businesses|length > 1 %}<div class="business-switch"><label for="businessSelect">Business workspace</label><select id="businessSelect" onchange="if(this.value) location.href='/business/'+this.value+'/'">{% for b in businesses %}<option value="{{ b.id }}" {% if b.id == business.id %}selected{% endif %}>{{ b.name }}</option>{% endfor %}</select></div>{% endif %}
+<div class="stats-grid">
+<article class="stat-card"><div class="stat-label">Total income <span class="stat-icon income-icon">↗</span></div><div class="stat-value">{{ business.currency }} {{ income|floatformat:2 }}</div><div class="stat-note">Recorded income</div></article>
+<article class="stat-card"><div class="stat-label">Total expenses <span class="stat-icon expense-icon">↘</span></div><div class="stat-value">{{ business.currency }} {{ expenses|floatformat:2 }}</div><div class="stat-note">Recorded expenses</div></article>
+<article class="stat-card"><div class="stat-label">Net balance <span class="stat-icon balance-icon">₹</span></div><div class="stat-value">{{ business.currency }} {{ balance|floatformat:2 }}</div><div class="stat-note">Income minus expenses</div></article>
+<article class="stat-card"><div class="stat-label">Transactions <span class="stat-icon count-icon">≡</span></div><div class="stat-value">{{ transaction_count }}</div><div class="stat-note">All entries for this business</div></article>
+</div>
+<section class="panel table-panel"><div class="section-heading"><div><h2>{% if request.COOKIES.django_language == 'ml' %}സമീപകാല ഇടപാടുകൾ{% else %}Recent transactions{% endif %}</h2><p class="muted">Latest income and expense entries</p></div><a class="text-link" href="{% url 'transaction_list' business.id %}">View all →</a></div>
+{% if recent_transactions %}<div class="table-scroll"><table><thead><tr><th>Description</th><th>Category</th><th>Date</th><th>Type</th><th class="number">Amount</th></tr></thead><tbody>
+{% for t in recent_transactions %}<tr><td class="primary-cell">{{ t.description }}</td><td>{{ t.category }}</td><td>{{ t.transaction_date|date:"d M Y" }}</td><td><span class="pill {% if t.transaction_type == 'expense' %}pill-expense{% else %}pill-income{% endif %}">{{ t.get_transaction_type_display }}</span></td><td class="number {% if t.transaction_type == 'expense' %}negative{% else %}positive{% endif %}">{% if t.transaction_type == 'expense' %}−{% else %}+{% endif %} {{ business.currency }} {{ t.amount|floatformat:2 }}</td></tr>{% endfor %}
+</tbody></table></div>{% else %}<div class="empty-state"><div class="empty-icon">▤</div><h3>No transactions yet</h3><p>Add your first income or expense to start tracking your business.</p><a class="btn" href="{% url 'transaction_create' business.id %}">Add first transaction</a></div>{% endif %}
+</section>
+<div class="notice"><strong>Getting started:</strong> This starter version records basic income and expenses. Double-entry accounting, invoices, GST, audit logs and production backups are planned next steps.</div>
+{% endblock %}
